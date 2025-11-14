@@ -1,5 +1,5 @@
 #yaml文件的读取
-import yaml
+import yaml,os
 from Config.Config import Config
 
 class ReadYaml(object):
@@ -19,7 +19,7 @@ class ReadYaml(object):
 
             #如果有文件上传，则拼接文件上传的地址
             if value.get("file地址") is not None:
-                value["file地址"]=Config.test_file_fir+value["file地址"]
+                value["file地址"]=Config.test_files_dir+value["file地址"]
 
         return data_yaml
 
