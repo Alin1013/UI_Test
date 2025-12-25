@@ -3,7 +3,7 @@ import os
 
 class Config:
     #基础的url地址，其余的页面在此基础上进行接口拼接
-    Base_url="https://"
+    Base_url="https://drv-dev-16.shimorelease.com"
 
     #项目根目录的配置，如果不存在就自行创建
     root_dir=os.path.split(os.path.split(__file__))[0][0]

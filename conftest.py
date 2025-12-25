@@ -116,7 +116,7 @@ from Utils.read_yaml import ReadYaml
 @pytest.fixture(scope="function")
 def login_success_fixture(page):
     #读取登陆成功用例
-    test_data=ReadYaml(os.path.join(Config.test_datas_dir,"TestLoginData.yaml")).read()
+    test_data=ReadYaml(os.path.join(Config.test_datas_dir,"TestLogin.yaml")).read()
     #遍历一遍用例
     for case in test_data:
         if case.get("用例标题")=="账号密码正确，登录成功":
@@ -127,7 +127,7 @@ def login_success_fixture(page):
             login_page.click_login_button()
             #使用url验证离开登录页
             import re
-            expect(login_page.page).not_to_have_url(re.compile(r".*/#/login$"),timeout=15000)
+            expect(login_page.page).not_to_have_url(re.compile(r".*/login$"),timeout=15000)
             return login_page.page
     raise Exception("未找到成功登陆的测试用例")
 

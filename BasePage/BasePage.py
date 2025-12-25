@@ -11,7 +11,7 @@ class BasePage:
         self.page = page
 
         #获取网页地址
-    def _goto_url(self,url):
+    def goto_url(self,url):
         self.page.goto(url,wait_until="domcontentloaded",timeout=60000)
 
         #关闭浏览器
@@ -19,7 +19,7 @@ class BasePage:
         self.page.quit()
 
         #点击元素(将frame框架和普通框架的封装在一起，就不用进行后续判断）
-    def _click(self,locator,fram_locator=None):
+    def click(self,locator,fram_locator=None):
         try:
             if fram_locator is not None:
                 self.page.frame_locator(fram_locator).locator(locator).click()
@@ -29,7 +29,7 @@ class BasePage:
             print(e)
 
         #悬浮操作
-    def _hover(self,locator,fram_locator=None):
+    def hover(self,locator,fram_locator=None):
         try:
             if fram_locator is not None:
                 self.page.frame_locator(fram_locator).locator(locator).hover()
@@ -39,7 +39,7 @@ class BasePage:
             print(e)
 
             #填充值操作
-    def _fill(self,locator,value,fram_locator=None):
+    def fill(self,locator,value,fram_locator=None):
         value=BuildinLibrary().replace_parameter(value)
         try:
             if fram_locator is not None:
@@ -50,7 +50,7 @@ class BasePage:
             print(e)
 
             #键值操作
-    def _type(self,locator,value,fram_locator=None):
+    def type(self,locator,value,fram_locator=None):
         value=BuildinLibrary().replace_parameter(value)
         try:
             if fram_locator is not None:
@@ -61,7 +61,7 @@ class BasePage:
             print(e)
 
             #文件上传操作
-    def _file(self,locator,files,fram_locator=None):
+    def file(self,locator,files,fram_locator=None):
         try:
             if fram_locator is not None:
                 self.page.frame_locator(fram_locator).locator(locator).set_input_files(files=files)
@@ -71,11 +71,11 @@ class BasePage:
             print(e)
 
             #断言操作—元素可见
-    def _ele_to_be_visible(self,locator):
+    def ele_to_be_visible(self,locator):
         return expect(self.page.locator(locator)).to_be_visible()
 
             #强制等待—元素可见
-    def _ele_to_be_visible_force(self,locator,frame_locator=None,timeout: int=5):
+    def ele_to_be_visible_force(self,locator,frame_locator=None,timeout: int=5):
         ele=None
         if frame_locator is not None:
             ele=self.page.frame_locator(frame_locator).locator(locator)
@@ -89,11 +89,11 @@ class BasePage:
             raise Exception("Timed out waiting for element to be visible")
 
             #元素是否check
-    def _ele_is_checked(self,selector):
+    def ele_is_checked(self,selector):
         return self.page.is_checked(selector)
 
             #浏览器操作（刷新reload，前进forward，后退back）
-    def _browser_operation(self,reload=False,forward=False,back=False):
+    def browser_operation(self,reload=False,forward=False,back=False):
         if reload:
             self.page.reload()
         if forward:
@@ -110,7 +110,7 @@ class BasePage:
         return path
 
             #删除对象
-    def _del_auth(self):
+    def del_auth(self):
         auth_path=Config.auth_dir+os.path.sep+"auth.json"
         if os.path.exists(auth_path):
             os.remove(auth_path)
