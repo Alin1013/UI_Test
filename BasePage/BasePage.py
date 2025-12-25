@@ -76,34 +76,36 @@ class BasePage:
         return expect(self.page.locator(locator)).to_be_visible()
 
             #强制等待—元素可见
-
     def ele_to_be_visible_force(self, locator, frame_locator=None, timeout: int = 5):
-        # 1. 定位元素（兼容frame）
+        # 1. 区分frame内/外元素，获取正确的等待对象
+        wait_target = self.page
         if frame_locator is not None:
-            ele = self.page.frame_locator(frame_locator).locator(locator)
-        else:
-            ele = self.page.locator(locator)
+            # 先定位frame，再基于frame等待元素
+            wait_target = self.page.frame_locator(frame_locator)
 
         # 2. 循环重试等待元素可见（每500ms检查一次）
-        total_checks = timeout * 2  # 5秒 → 10次检查（每次500ms）
+        total_checks = timeout * 2  # 总检查次数（5秒→10次）
         for _ in range(total_checks):
             try:
-                # wait_for_selector 传正确的选择器 + 超时参数
-                # 单位是毫秒，500ms = 0.5秒
-                self.page.wait_for_selector(
-                    locator,  # 第一个参数：字符串选择器（必传）
+                # 关键修正：移除frame参数，根据wait_target（page/frame）调用wait_for_selector
+                wait_target.wait_for_selector(
+                    locator,  # 元素选择器（字符串，必传）
                     state="visible",  # 等待元素"可见"
-                    timeout=500,  # 单次检查超时时间（500ms）
-                    frame=frame_locator  # 兼容frame定位
+                    timeout=500  # 单次检查超时（500ms）
                 )
-                # 二次确认元素可见
+                # 定位元素并二次确认可见性
+                if frame_locator is not None:
+                    ele = self.page.frame_locator(frame_locator).locator(locator)
+                else:
+                    ele = self.page.locator(locator)
+
                 if ele.is_visible():
                     return ele
             except PlaywrightTimeoutError:
-                # 单次超时不抛错，继续循环重试
+                # 单次超时不抛错，继续重试
                 continue
 
-        # 3. 总超时后抛异常
+        # 3. 总超时后抛明确异常
         raise Exception(f"超时{timeout}秒，元素仍未可见！定位器：{locator}，frame：{frame_locator}")
 
             #元素是否check
