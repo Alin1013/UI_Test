@@ -6,7 +6,12 @@ class Config:
     Base_url="https://drv-dev-16.shimorelease.com"
 
     #项目根目录的配置，如果不存在就自行创建
-    root_dir=os.path.split(os.path.split(__file__))[0][0]
+    # 获取当前文件的绝对路径
+    current_file_path = __file__
+    # 第一步：拆分出当前文件所在的目录（Config文件夹路径）
+    config_dir = os.path.split(current_file_path)[0]
+    # 第二步：拆分出Config文件夹的上级目录（项目根目录）
+    root_dir = os.path.split(config_dir)[0]
     test_cases_dir =os.path.join(root_dir,"TestCases")
     test_datas_dir =os.path.join(root_dir,"TestData")
     test_files_dir =os.path.join(root_dir,"TestFiles")
