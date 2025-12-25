@@ -10,7 +10,7 @@ from pathlib import Path
 
 from pandas.io.formats.format import buffer_put_lines
 
-form Config.Config import Config
+from Config.Config import Config
 
 def run_command(command,description,log_file=None):
     # 运行命令并实时显示输出，同时保存到日志文件
@@ -35,8 +35,8 @@ def run_command(command,description,log_file=None):
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
-            universal_newlines=True
-            bufsize=1,
+            universal_newlines=True,
+            bufsize=1
         )
         for line in iter(process.stdout.readline, ''):
             if line:
