@@ -1,6 +1,7 @@
 #封装登陆页面便于后续复用
 from BasePage.BasePage import BasePage
-
+import allure
+from Config.Config import  Config
 
 class LoginPage(BasePage):
     username='//*[@id="login_username"]'
