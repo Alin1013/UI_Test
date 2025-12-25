@@ -8,16 +8,16 @@ from Config.Config import Config
 
 
 class TestLogin:
-    test_data=ReadYaml(os.path.join(Config.test_datas_dir,"TestCase.yml")).read()
+    test_data=ReadYaml(os.path.join(Config.test_datas_dir,"TestLogin.yaml")).read()
     #验证数据是否读取成功
     print(f"参数化用例数据：{test_data}")
 
     @pytest.mark.run(order=1)
     @AllurePretty.AllurePretty_Warpper
-    @pytest.mark.parametrize("CaseData",ReadYaml(os.path.join(Config.test_datas_dir,"TestCase.yml")).read())
+    @pytest.mark.parametrize("CaseData",ReadYaml(os.path.join(Config.test_datas_dir,"TestLogin.yaml")).read())
     def test_login(self,page,CaseData):
         new_page=LoginPage(page)
-        AllurePretty(page,CaseData).AllurePretty()
+        #AllurePretty(page,CaseData).AllurePretty()
         new_page.goto_login_page(CaseData["url"])
         new_page.fill_username(CaseData["账号"])
         new_page.fill_password(CaseData["密码"])

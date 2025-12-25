@@ -12,8 +12,8 @@ class Config:
     config_dir = os.path.split(current_file_path)[0]
     # 第二步：拆分出Config文件夹的上级目录（项目根目录）
     root_dir = os.path.split(config_dir)[0]
-    test_cases_dir =os.path.join(root_dir,"TestCases")
-    test_datas_dir =os.path.join(root_dir,"TestData")
+    test_cases_dir =os.path.join(root_dir,"TestCase")
+    test_datas_dir =os.path.join(root_dir,"TestDatas")
     test_files_dir =os.path.join(root_dir,"TestFiles")
     #report,result,screenshots目录在同一级TestReports内
     test_reports_dir =os.path.join(root_dir,"TestReports","AllureReports")

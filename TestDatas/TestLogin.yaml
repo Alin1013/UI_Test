@@ -1,8 +1,7 @@
--
-  "用例编号":Login_success
-  "功能":登陆
-  "是否执行":Y
-  "用例标题":账号密码正确，登录成功
-  "账号":"test@shimo.im"
-  "密码":"Aa1234567."
-  "url":/login
+- 用例编号: Login_success
+  功能: 登陆
+  是否执行: Y
+  用例标题: 账号密码正确，登录成功
+  账号: "test@shimo.im"
+  密码: "Aa1234567."
+  url: /login

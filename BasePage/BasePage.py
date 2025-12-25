@@ -2,6 +2,7 @@
 import os
 from playwright.sync_api import expect, Page
 from selenium.common.exceptions import TimeoutException
+from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 
 from BuildinLibrary.BuildinLibrary import BuildinLibrary
 from Config.Config import Config
@@ -75,18 +76,35 @@ class BasePage:
         return expect(self.page.locator(locator)).to_be_visible()
 
             #强制等待—元素可见
-    def ele_to_be_visible_force(self,locator,frame_locator=None,timeout: int=5):
-        ele=None
+
+    def ele_to_be_visible_force(self, locator, frame_locator=None, timeout: int = 5):
+        # 1. 定位元素（兼容frame）
         if frame_locator is not None:
-            ele=self.page.frame_locator(frame_locator).locator(locator)
+            ele = self.page.frame_locator(frame_locator).locator(locator)
         else:
-            ele=self.page.locator(locator)
-        for t in range(0,timeout):
-            self.page.wait_for_selector(500)
-            if ele.is_visible():
-                break
-        else:
-            raise Exception("Timed out waiting for element to be visible")
+            ele = self.page.locator(locator)
+
+        # 2. 循环重试等待元素可见（每500ms检查一次）
+        total_checks = timeout * 2  # 5秒 → 10次检查（每次500ms）
+        for _ in range(total_checks):
+            try:
+                # wait_for_selector 传正确的选择器 + 超时参数
+                # 单位是毫秒，500ms = 0.5秒
+                self.page.wait_for_selector(
+                    locator,  # 第一个参数：字符串选择器（必传）
+                    state="visible",  # 等待元素"可见"
+                    timeout=500,  # 单次检查超时时间（500ms）
+                    frame=frame_locator  # 兼容frame定位
+                )
+                # 二次确认元素可见
+                if ele.is_visible():
+                    return ele
+            except PlaywrightTimeoutError:
+                # 单次超时不抛错，继续循环重试
+                continue
+
+        # 3. 总超时后抛异常
+        raise Exception(f"超时{timeout}秒，元素仍未可见！定位器：{locator}，frame：{frame_locator}")
 
             #元素是否check
     def ele_is_checked(self,selector):
