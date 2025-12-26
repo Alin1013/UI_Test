@@ -15,10 +15,7 @@ class Config:
     test_cases_dir =os.path.join(root_dir,"TestCase")
     test_datas_dir =os.path.join(root_dir,"TestDatas")
     test_files_dir =os.path.join(root_dir,"TestFiles")
-    #report,result,screenshots目录在同一级TestReports内
-    test_reports_dir =os.path.join(root_dir,"TestReports","AllureReports")
-    test_results_dir =os.path.join(root_dir,"TestReports","AllureResults")
-    test_screenshots_dir =os.path.join(root_dir,"TestReports","Screenshots")
+    test_screenshots_dir =os.path.join(root_dir,"Screenshots")
     logs =os.path.join(root_dir,"Logs")
 
     #权限认证目录
@@ -32,8 +29,6 @@ class Config:
         directories=[
             cls.test_cases_dir,
             cls.test_datas_dir,
-            cls.test_reports_dir,
-            cls.test_results_dir,
             cls.test_screenshots_dir,
             cls.logs,
             cls.auth_dir,

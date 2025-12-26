@@ -11,6 +11,14 @@ class BasePage:
     def __init__(self, page:Page):
         self.page = page
 
+    def _normalize_locator(self, locator):
+        """
+        规范化定位器：如果是绝对xpath（以/html开头），添加xpath=前缀
+        """
+        if locator.startswith('/html') and not locator.startswith('xpath='):
+            return f'xpath={locator}'
+        return locator
+
         #获取网页地址
     def goto_url(self,url):
         self.page.goto(url,wait_until="domcontentloaded",timeout=60000)
@@ -22,20 +30,22 @@ class BasePage:
         #点击元素(将frame框架和普通框架的封装在一起，就不用进行后续判断）
     def click(self,locator,fram_locator=None):
         try:
+            normalized_locator = self._normalize_locator(locator)
             if fram_locator is not None:
-                self.page.frame_locator(fram_locator).locator(locator).click()
+                self.page.frame_locator(fram_locator).locator(normalized_locator).click()
             else:
-                self.page.click(locator)
+                self.page.click(normalized_locator)
         except Exception as e:
             print(e)
 
         #悬浮操作
     def hover(self,locator,fram_locator=None):
         try:
+            normalized_locator = self._normalize_locator(locator)
             if fram_locator is not None:
-                self.page.frame_locator(fram_locator).locator(locator).hover()
+                self.page.frame_locator(fram_locator).locator(normalized_locator).hover()
             else:
-                self.page.hover(locator)
+                self.page.hover(normalized_locator)
         except Exception as e:
             print(e)
 
@@ -43,10 +53,11 @@ class BasePage:
     def fill(self,locator,value,fram_locator=None):
         value=BuildinLibrary().replace_parameter(value)
         try:
+            normalized_locator = self._normalize_locator(locator)
             if fram_locator is not None:
-                self.page.frame_locator(selector=fram_locator).locator(selector_or_locator=locator).fill(value)
+                self.page.frame_locator(selector=fram_locator).locator(selector_or_locator=normalized_locator).fill(value)
             else:
-                self.page.fill(selector=locator,value=value)
+                self.page.fill(selector=normalized_locator,value=value)
         except Exception as e:
             print(e)
 
@@ -54,10 +65,11 @@ class BasePage:
     def type(self,locator,value,fram_locator=None):
         value=BuildinLibrary().replace_parameter(value)
         try:
+            normalized_locator = self._normalize_locator(locator)
             if fram_locator is not None:
-                self.page.frame_locator(selector=fram_locator).locator(selector_or_locator=locator).type(value)
+                self.page.frame_locator(selector=fram_locator).locator(selector_or_locator=normalized_locator).type(value)
             else:
-                self.page.type(selector=locator,text=value,delay=100)
+                self.page.type(selector=normalized_locator,text=value,delay=100)
         except Exception as e:
             print(e)
 
@@ -77,28 +89,24 @@ class BasePage:
 
             #强制等待—元素可见
     def ele_to_be_visible_force(self, locator, frame_locator=None, timeout: int = 5):
+        # 规范化xpath选择器
+        normalized_locator = self._normalize_locator(locator)
+        
         # 1. 区分frame内/外元素，获取正确的等待对象
-        wait_target = self.page
         if frame_locator is not None:
-            # 先定位frame，再基于frame等待元素
-            wait_target = self.page.frame_locator(frame_locator)
+            # frame内的元素
+            ele = self.page.frame_locator(frame_locator).locator(normalized_locator)
+        else:
+            # 普通元素，使用locator方法可以自动识别xpath
+            ele = self.page.locator(normalized_locator)
 
         # 2. 循环重试等待元素可见（每500ms检查一次）
         total_checks = timeout * 2  # 总检查次数（5秒→10次）
         for _ in range(total_checks):
             try:
-                # 关键修正：移除frame参数，根据wait_target（page/frame）调用wait_for_selector
-                wait_target.wait_for_selector(
-                    locator,  # 元素选择器（字符串，必传）
-                    state="visible",  # 等待元素"可见"
-                    timeout=500  # 单次检查超时（500ms）
-                )
-                # 定位元素并二次确认可见性
-                if frame_locator is not None:
-                    ele = self.page.frame_locator(frame_locator).locator(locator)
-                else:
-                    ele = self.page.locator(locator)
-
+                # 使用locator的wait_for方法，可以正确处理xpath
+                ele.wait_for(state="visible", timeout=500)
+                # 二次确认可见性
                 if ele.is_visible():
                     return ele
             except PlaywrightTimeoutError:
