@@ -23,12 +23,14 @@ class AllurePretty(object):
     def AllurePretty_Warpper(cls,func):
         @functools.wraps(func)
         def inner(*args,**kwargs):
+            #获取page对象（支持page和logged_in_page两种参数名）
+            page_obj = kwargs.get("page") or kwargs.get("logged_in_page")
             #获取casedata
-            cls.AllurePretty(page=kwargs.get("page"),CaseData=kwargs.get("CaseData"))
+            cls.AllurePretty(page=page_obj,CaseData=kwargs.get("CaseData"))
             #运行测试用例
             r=func(*args,**kwargs)
             #添加截图
-            cls.AllurePretty_Screenshot(page=kwargs.get("page"),CaseData=kwargs.get("CaseData"))
+            cls.AllurePretty_Screenshot(page=page_obj,CaseData=kwargs.get("CaseData"))
             return r
         return inner
 

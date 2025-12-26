@@ -12,7 +12,7 @@ class TestLogin:
     #验证数据是否读取成功
     print(f"参数化用例数据：{test_data}")
 
-    @pytest.mark.run(order=1)
+    @pytest.mark.order(1)
     @AllurePretty.AllurePretty_Warpper
     @pytest.mark.parametrize("CaseData",ReadYaml(os.path.join(Config.test_datas_dir,"TestLogin.yaml")).read())
     def test_login(self,page,CaseData):

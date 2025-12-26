@@ -1,0 +1,5 @@
+- 用例编号: Create_Sample_Form_success
+  功能: 创建表单
+  是否执行: Y
+  用例标题: 表单创建成功
+  url: /recent
